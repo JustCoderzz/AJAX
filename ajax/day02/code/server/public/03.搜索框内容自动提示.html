@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>搜索框输入文字自动提示</title>
+	<link rel="stylesheet" href="/assets/bootstrap/dist/css/bootstrap.min.css">
+	<style type="text/css">
+		.container {
+			padding-top: 150px;
+		}
+		.list-group {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="form-group">
+			<input type="text" class="form-control" placeholder="请输入搜索关键字" id="search">
+			<ul class="list-group" id="list-box">
+				
+			</ul>
+		</div>
+	</div>
+	<script src="/js/ajax.js"></script>
+	<script src="/js/template-web.js"></script>
+	<script type="text/html" id="tpl">
+		{{each result}}
+			<li class="list-group-item">{{$value}}</li>
+		{{/each}}
+	</script>
+	<script>
+		// 获取搜索框
+		var searchInp = document.getElementById('search');
+		// 获取提示文字的存放容器
+		var listBox = document.getElementById('list-box');
+		// 存储定时器的变量
+		var timer = null;
+		// 当用户在文本框中输入的时候触发
+		searchInp.oninput = function () {
+			// 清除上一次开启的定时器
+			clearTimeout(timer);
+			// 获取用户输入的内容
+			var key = this.value;
+			// 如果用户没有在搜索框中输入内容
+			if (key.trim().length == 0) {
+				// 将提示下拉框隐藏掉
+				listBox.style.display = 'none';
+				// 阻止程序向下执行
+				return;
+			}
+
+			// 开启定时器 让请求延迟发送
+			timer = setTimeout(function () {
+				// 向服务器端发送请求
+				// 向服务器端索取和用户输入关键字相关的内容
+				ajax({
+					type: 'get',
+					url: 'http://localhost:3000/searchAutoPrompt',
+					data: {
+						key: key
+					},
+					success: function (result) {
+						// 使用模板引擎拼接字符串
+						var html = template('tpl', {result: result});
+						// 将拼接好的字符串显示在页面中
+						listBox.innerHTML = html;
+						// 显示ul容器
+						listBox.style.display = 'block';
+					}
+				})
+			}, 800)
+			
+		}
+	</script>
+</body>
+</html>

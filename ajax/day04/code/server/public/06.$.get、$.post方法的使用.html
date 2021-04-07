@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>$.ajax方法基本使用</title>
+</head>
+<body>
+	<button id="btn">发送请求</button>
+	<script src="/js/jquery.min.js"></script>
+	<script>
+		$('#btn').on('click', function () {
+			// $.get('/base', 'name=zhangsan&age=30', function (response) {
+			// 	console.log(response)
+			// })
+			
+			$.post('/base', function (response) {
+				console.log(response)
+			})
+		});
+	</script>
+</body>
+</html>
